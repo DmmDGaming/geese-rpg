@@ -27,10 +27,8 @@ function parseTime(time: number): string {
 async function checkLinux(): Promise<boolean> {
     return new Promise((resolve, reject) => {
         childProcess.exec("which ffmpeg", (error, stdout, stderr) => {
-            if(error) return reject(error);
-            if(stderr) return reject(stderr);
-            console.log(`001 | DEBUG AT SOURCE/HELPERS/SOUNDPLAYER.TS:\n${stdout}`);
-            resolve(stdout[0] === "/");
+            if(error) resolve(false);
+            else resolve(true);
         });
     });
 }
@@ -53,17 +51,13 @@ function installLinux(): Promise<boolean> {
         let installers = Object.keys(commands);
         for(let i = 0; i < installers.length; i++) {
             let installer = installers[i];
+            let found = false;
             childProcess.exec(`which ${installer}`, (errorWhich, stdoutWhich, stderrWhich) => {
-                console.log(`002 | DEBUG AT SOURCE/HELPERS/SOUNDPLAYER.TS:\n${errorWhich}\n${stderrWhich}`);
-                if(errorWhich || stderrWhich) return reject(errorWhich || stderrWhich);
-                if(stdoutWhich[0] === "/") {
-                    childProcess.exec(commands[installer as keyof typeof commands], (error, stdout, stderr) => {
-                        console.log(`003 | DEBUG AT SOURCE/HELPERS/SOUNDPLAYER.TS:\n${error}\n${stderr}`);
-                        if(error || stderr) return reject(error || stderr);
-                        return resolve(true);
-                    })
-                }
+                if(!errorWhich) childProcess.exec(commands[installer as keyof typeof commands], (errorInstall, stdoutInstall, stderrInstall) => {
+                    if(!errorInstall) found = true;
+                });
             })
+            if(found) return resolve(true);
         }
         resolve(false);
     })
