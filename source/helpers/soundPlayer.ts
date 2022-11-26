@@ -1,7 +1,7 @@
 // Imports
 import childProcess from "node:child_process";
 import fs from "node:fs";
-import path from "node:path";
+import path, { resolve } from "node:path";
 import url from "node:url";
 
 // Definitions
@@ -26,7 +26,7 @@ function parseTime(time: number): string {
 
 async function checkLinux(): Promise<boolean> {
     return new Promise((resolve, reject) => {
-        childProcess.exec("which ffmpeg", (error, stdout, stderr) => {
+        childProcess.exec("which ffplay", (error, stdout, stderr) => {
             if(error) resolve(false);
             else resolve(true);
         });
@@ -42,7 +42,7 @@ async function checkWindows(): Promise<boolean> {
 // }
 
 function installLinux(): Promise<boolean> {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolveInstall, rejectInstall) => {
         let commands = {
             "apt": "sudo apt install ffmpeg -y",
             "dnf": "sudo dnf install ffmpeg -y",
@@ -51,16 +51,19 @@ function installLinux(): Promise<boolean> {
         let installers = Object.keys(commands);
         for(let i = 0; i < installers.length; i++) {
             let installer = installers[i];
-            let found = false;
-            childProcess.exec(`which ${installer}`, (errorWhich, stdoutWhich, stderrWhich) => {
-                if(!errorWhich) childProcess.exec(commands[installer as keyof typeof commands], (errorInstall, stdoutInstall, stderrInstall) => {
-                    if(!errorInstall) found = true;
+            let found = await new Promise((resolveFind, rejectFind) => {
+                childProcess.exec(`which ${installer}`, (errorWhich, stdoutWhich, stderrWhich) => {
+                    if(errorWhich) return resolveFind(false);
+                    childProcess.exec(
+                        commands[installer as keyof typeof commands],
+                        (errorInstall, stdoutInstall, stderrInstall) => resolveFind(!errorInstall)
+                    );
                 });
-            })
-            if(found) return resolve(true);
+            });
+            if(found) return resolveInstall(true);
         }
-        resolve(false);
-    })
+        resolveInstall(false);
+    }) ;
 }
 
 async function installWindows(): Promise<boolean> {
