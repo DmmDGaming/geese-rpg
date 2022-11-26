@@ -1,0 +1,29 @@
+{
+  "devDependencies": {
+    "@types/blessed": "^0.1.19",
+    "@types/node": "^18.11.9"
+  },
+  "name": "geese-rpg",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node --es-module-specifier-resolution=node compiled/player"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DmmDGaming/geese-rpg.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DmmDGaming/geese-rpg/issues"
+  },
+  "homepage": "https://github.com/DmmDGaming/geese-rpg#readme",
+  "type": "module",
+  "dependencies": {
+    "blessed": "^0.1.81",
+    "blessed-contrib": "^4.11.0"
+  },
+  "description": ""
+}
