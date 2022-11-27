@@ -1,30 +1,10 @@
 // Imports
 import childProcess from "node:child_process";
-import fs from "node:fs";
-import path, { resolve } from "node:path";
+import path from "node:path";
 import url from "node:url";
 
-// Definitions
-interface playSoundOptions {
-    file: string,
-    time: number,
-    volume: number,
-}
-
 // Functions
-function parseTime(time: number): string {
-    let hours = Math.trunc(time / 1000 / 60 / 60).toString().padStart(2, "0");
-    let minutes = Math.trunc(time / 1000 / 60 % 60).toString().padStart(2, "0");
-    let seconds = Math.trunc(time / 1000 % 60).toString().padStart(2, "0");
-    let milliseconds = Math.trunc(time % 1000).toString().padStart(3, "0");
-    return `${hours}:${minutes}:${seconds}.${milliseconds}`;
-}
-
-// function checkDarwin(): boolean {
-
-// }
-
-async function checkLinux(): Promise<boolean> {
+function checkDarwin(): Promise<boolean> {
     return new Promise((resolve, reject) => {
         childProcess.exec("which ffplay", (error, stdout, stderr) => {
             if(error) resolve(false);
@@ -33,13 +13,30 @@ async function checkLinux(): Promise<boolean> {
     });
 }
 
-async function checkWindows(): Promise<boolean> {
+function checkLinux(): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+        childProcess.exec("which ffplay", (error, stdout, stderr) => {
+            if(error) resolve(false);
+            else resolve(true);
+        });
+    });
+}
+
+function checkWindows(): Promise<boolean> {
     return new Promise((resolve, reject) => resolve(true));
 }
 
-// function installDarwin(): boolean {
-
-// }
+function installDarwin(): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+        childProcess.exec("which brew", (errorWhich, stdoutWhich, stderrWhich) => {
+            if(errorWhich) return resolve(false);
+            childProcess.exec(
+                "brew install ffmpeg",
+                (errorInstall, stdoutInstall, stderrInstall) => resolve(!errorInstall)
+            );
+        })
+    });
+}
 
 function installLinux(): Promise<boolean> {
     return new Promise(async (resolveInstall, rejectInstall) => {
@@ -66,13 +63,29 @@ function installLinux(): Promise<boolean> {
     }) ;
 }
 
-async function installWindows(): Promise<boolean> {
+function installWindows(): Promise<boolean> {
     return new Promise((resolve, reject) => resolve(true));
 }
 
-// function playSoundDarwin(options: playSoundOptions): childProcess.ChildProcessWithoutNullStreams {
+function parseTime(time: number): string {
+    let hours = Math.trunc(time / 1000 / 60 / 60).toString().padStart(2, "0");
+    let minutes = Math.trunc(time / 1000 / 60 % 60).toString().padStart(2, "0");
+    let seconds = Math.trunc(time / 1000 % 60).toString().padStart(2, "0");
+    let milliseconds = Math.trunc(time % 1000).toString().padStart(3, "0");
+    return `${hours}:${minutes}:${seconds}.${milliseconds}`;
+}
 
-// }
+function playSoundDarwin(options: playSoundOptions): childProcess.ChildProcessWithoutNullStreams {
+    return childProcess.spawn(
+        "ffplay",
+        [
+            options.file,
+            "-nodisp", "-autoexit", "-loglevel", "quiet",
+            "-volume", options.volume.toString(),
+            "-ss", parseTime(options.time)
+        ]
+    );
+}
 
 function playSoundLinux(options: playSoundOptions): childProcess.ChildProcessWithoutNullStreams {
     return childProcess.spawn(
@@ -101,10 +114,13 @@ function playSoundWindows(options: playSoundOptions): childProcess.ChildProcessW
 // Exports
 export default {
     parseTime,
+    checkDarwin,
     checkLinux,
     checkWindows,
+    installDarwin,
     installLinux,
     installWindows,
+    playSoundDarwin,
     playSoundLinux,
     playSoundWindows
 }

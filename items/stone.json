@@ -1,0 +1,12 @@
+{
+    "id": "stone",
+    "rarity": "common",
+    "sounds": [],
+    "stack": 20,
+    "tags": [
+        "material", "wild"
+    ],
+    "textures": [
+        "stone.png"
+    ]
+}

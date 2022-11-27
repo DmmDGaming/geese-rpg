@@ -1,0 +1,12 @@
+{
+    "id": "stick",
+    "rarity": "common",
+    "sounds": [],
+    "stack": 20,
+    "tags": [
+        "material", "wild"
+    ],
+    "textures": [
+        "stick.png"
+    ]
+}
