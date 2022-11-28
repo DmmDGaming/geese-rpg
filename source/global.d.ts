@@ -103,11 +103,29 @@ declare global {
             }
         }
     }
+
+    interface elementData {
+        pixels?: pixelData[][],
+        text?: {
+            align: "left" | "center" | "right",
+            content: string,
+            width: number
+        },
+        x: number,
+        y: number
+    }
        
     interface playSoundOptions {
         file: string,
         time: number,
         volume: number,
+    }
+
+    interface pixelData {
+        r: number,
+        g: number,
+        b: number,
+        a: number
     }
 }
 

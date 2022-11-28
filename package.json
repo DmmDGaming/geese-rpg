@@ -1,5 +1,6 @@
 {
   "devDependencies": {
+    "@types/get-pixels": "^3.3.2",
     "@types/node": "^18.11.9"
   },
   "name": "geese-rpg",
@@ -21,9 +22,12 @@
   "homepage": "https://github.com/DmmDGaming/geese-rpg#readme",
   "type": "module",
   "dependencies": {
+    "ansi-align": "^3.0.1",
     "chalk": "^5.1.2",
     "color-blend": "^4.0.0",
-    "get-pixels": "^3.3.3"
+    "get-pixels": "^3.3.3",
+    "string-width": "^5.1.2",
+    "word-wrap": "^1.2.3"
   },
   "description": ""
 }
