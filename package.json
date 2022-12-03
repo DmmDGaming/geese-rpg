@@ -25,6 +25,7 @@
     "ansi-align": "^3.0.1",
     "chalk": "^5.1.2",
     "color-blend": "^4.0.0",
+    "decompress": "^4.2.1",
     "get-pixels": "^3.3.3",
     "string-width": "^5.1.2",
     "word-wrap": "^1.2.3"
