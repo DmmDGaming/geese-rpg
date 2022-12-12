@@ -1,4 +1,5 @@
 // Imports
+// @ts-ignore
 import ansiAlign from "ansi-align";
 import chalk from "chalk";
 import colorBlend from "color-blend";
