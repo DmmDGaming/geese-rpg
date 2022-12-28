@@ -1,39 +1,29 @@
-import soundPlayer from "./helpers/soundPlayer";
-import readline from "node:readline";
-import chalk from "chalk";
+// for(let i = 0; i < 50; i++) {
+//     console.log("█".repeat(200))
+// }
 
-readline.emitKeypressEvents(process.stdin);
-if (process.stdin.isTTY) process.stdin.setRawMode(true);
-
+import { assets, chunkAsset } from "./loader";
+import { deltaFrame, drawFrame, generateElementAsset, renderFrame } from "./renderer";
+let heart = chunkAsset(assets["test.png"], 8, 8)[0];
+let x = 0, y = 0;
 process.stdin.on("keypress", (str, key) => {
     if(key.ctrl && key.name === "c") process.exit();
-})
-if(!(await soundPlayer.checkPlayer())) {
-    console.log(chalk.redBright("i need to download ffmpeg plz giv permission"))
-    console.log(chalk.yellowBright("press enter to allow"))
-    console.log(chalk.yellowBright("press ctrl + c to exit"))
-    let installed = false;
-    process.stdin.on("keypress", async (key, str) => {
-        if(key.name === "return" && !installed) {
-            installed = true;
-            console.log("downloading...")
-            await soundPlayer.installPlayer();
-            console.log("complete")
-            play();
+    if(key.name === "left") x--;
+    if(key.name === "right") x++;
+    if(key.name === "up") y--;
+    if(key.name === "down") y++;
+    console.clear();
+    console.log(x, y)
+    let element = generateElementAsset(heart, x, y);
+    let frame = renderFrame([ element ]);
+    process.stdout.write("\x1b[?25l")
+    // let delta = deltaFrame(frame, { data: [], height: 50, width: 200 });
+    // drawFrame(delta);
+    for(let i = 0; i < 25 i++) {
+        for(let j = 0; j < 100; j++) {
+            let cell = frame[i * 200 + j];
+            process.stdout.write(`\x1b[48;2;${cell.r};${cell.g};${cell.b}m `)
         }
-    })
-}
-else {
-    console.log(chalk.greenBright("ffmpeg found i commit play sick musik"))
-    console.log(chalk.yellowBright("press ctrl + c to exit"))
-    play();
-}
-
-async function play() {    
-    console.log("enjoy - DUET (Omori) by Omocat")
-    await soundPlayer.playSound({
-        file: "sounds/omori.mp3",
-        time: 0,
-        volume: 100
-    })
-}
+        process.stdout.write("\x1b[49m\n")
+    }
+})
